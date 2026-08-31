@@ -147,6 +147,7 @@ CREATE TABLE FDE_VIEWS.AgentAuditLog (
 );
 
 -- Grant the agent user permission to write only to this specific table
+```
 GRANT INSERT ON FDE_VIEWS.AgentAuditLog TO USR_FDE_RO;
 ```
 
@@ -163,4 +164,46 @@ cd cold-chain-logistics-FDE-Project
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+streamlit run src/ui.py
+```
+
+1. Add the Microsoft GPG repository key
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+
+2. Add the Microsoft SQL Server Ubuntu repository
+curl -fsSL https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+
+3. Update apt and install the driver (Accepting the EULA)
+sudo apt-get update
+sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
+4. Install the unixODBC development headers
+sudo apt-get install -y unixodbc-dev
+
+5. Create the systemd service file
+```
+sudo nano /etc/systemd/system/streamlit.service
+```
+
+6. Paste the configuration
+```
+[Unit]
+Description=Streamlit Cold-Chain Dispatch Console
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/cold-chain-logistics-FDE-Project
+ExecStart=/home/ubuntu/cold-chain-logistics-FDE-Project/venv/bin/streamlit run src/ui.py --server.port=8501 --server.address=0.0.0.0
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+7. Register and start the service
+```
+sudo systemctl daemon-reload
+sudo systemctl enable streamlit
+sudo systemctl start streamlit
 ```
