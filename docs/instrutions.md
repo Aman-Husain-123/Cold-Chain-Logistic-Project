@@ -149,3 +149,18 @@ CREATE TABLE FDE_VIEWS.AgentAuditLog (
 -- Grant the agent user permission to write only to this specific table
 GRANT INSERT ON FDE_VIEWS.AgentAuditLog TO USR_FDE_RO;
 ```
+
+## Phase 5
+streamlit run src\ui.py
+
+## Phase 6
+- Deployment
+```
+sudo apt update && sudo apt install -y python3-pip python3-venv git
+cd /home/ubuntu
+git clone https://github.com/nimowhyca/cold-chain-logistics-FDE-Project.git
+cd cold-chain-logistics-FDE-Project
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
